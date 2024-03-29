@@ -67,6 +67,8 @@
     <key>UIUserInterfaceStyle</key>
     <string>Light</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
-    <false/>
+    <true/>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>We need access to your photo library to allow you to download images.</string>
   </dict>
 </plist>
