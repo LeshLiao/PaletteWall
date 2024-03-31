@@ -1,9 +1,15 @@
 // import React from "react";
 import React, { useState } from 'react';
-import { Dimensions, View,Image, StyleSheet ,FlatList } from 'react-native';
+import { Dimensions, View,Image, StyleSheet ,FlatList,TouchableHighlight } from 'react-native';
 
 export default function TopFlashList() {
   const width = Dimensions.get('window').width * 0.85;
+  const height = width * 0.26;
+  console.log('width='+width)
+  const testFunc = (index) => {
+    console.log('testFunc');
+    console.log(index);
+  }
 
   const [images] = useState([
     require('./images/1.jpg'),
@@ -17,27 +23,27 @@ export default function TopFlashList() {
     showsHorizontalScrollIndicator={false}
     data={images}
     renderItem={ ({ item, index }) => (
-      <View style={{
-        width: width,
-        height: 100,
-        margin: 5
-      }}>
-        <Image source={item} /* Use item to set the image source */
-          key={index} /* Important to set a key for list items,
-                         but it's wrong to use indexes as keys, see below */
-          style={{
-            // width: width,
-            width: '100%',
-            height: 100,
-            borderRadius: 10,
-            // borderWidth:2,
-            // borderColor:'#d35647',
-            objectFit: 'fill',
-            // objectFit: 'cover',
-            // resizeMode: 'cover',
+        <TouchableHighlight
+        key={item.key}
+        onPress={() => testFunc(index)}
+        style={{
+            width: width,
+            height: height,
+            margin: 5
           }}
-        />
-      </View>
+        >
+        <Image source={item}
+            key={index}
+            style={{
+              width: '100%',
+              height: height,
+              borderRadius: 10,
+              // borderWidth:2,
+              // borderColor:'#d35647',
+              objectFit: 'fill',
+            }}
+          />
+      </TouchableHighlight>
     )}
   />
   );
