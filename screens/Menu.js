@@ -1,4 +1,4 @@
-import {Button,StyleSheet,TouchableOpacity,Image} from 'react-native';
+import {Button,StyleSheet,TouchableOpacity,Image,View,ActivityIndicator} from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { RewardedAd, RewardedAdEventType, TestIds } from 'react-native-google-mobile-ads';
 import React, { useEffect, useState } from 'react';
@@ -10,16 +10,19 @@ const rewarded = RewardedAd.createForAdRequest(
   keywords: ['fashion', 'clothing'],
 });
 
-
 export default function Menu({link}){
   const { showActionSheetWithOptions } = useActionSheet();
-
   const [loaded, setLoaded] = useState(false);
+  const [press, setPress] = useState(false);
+  const [buttonVisible, setButtonVisible] = useState(true);
 
   useEffect(() => {
     const unsubscribeLoaded = rewarded.addAdEventListener(
       RewardedAdEventType.LOADED, () => {
+      console.log('effect setLoaded(true);');
       setLoaded(true);
+      console.log('effect rewarded.show();');
+      rewarded.show();
     });
 
     const unsubscribeEarned = rewarded.addAdEventListener(
@@ -28,20 +31,20 @@ export default function Menu({link}){
         console.log('User earned reward of ', reward);
         console.log('link='+link);
         saveToCameraRoll(link);
+        setButtonVisible(false);
       },
     );
 
-    // Start loading the rewarded ad straight away
-    rewarded.load();
-
     // Unsubscribe from events on unmount
     return () => {
+      console.log('unmount===')
       unsubscribeLoaded();
       unsubscribeEarned();
     };
   }, []);
 
   const onPress = () => {
+    console.log('onPress=======')
     const options = ['Watch Ads', 'Go Premium', 'Cancel'];
     const destructiveButtonIndex = 0;
     const cancelButtonIndex = 2;
@@ -54,7 +57,9 @@ export default function Menu({link}){
       switch (selectedIndex) {
         case destructiveButtonIndex:
           console.log('Watch Ads');
-          rewarded.show();
+          setPress(true);
+          rewarded.load();
+          // rewarded.show();
           break;
         case 1:
           console.log('Go Premium');
@@ -88,19 +93,34 @@ export default function Menu({link}){
     }
   };
 
+  // No advert ready to show yet
+  // if (!loaded) {
+  //   return null;
+  // }
 
   return (
-    <TouchableOpacity onPress={onPress} style={styles.container}>
-      <Image
-        source={require('./images/cloud_download.png')}
-        style={styles.image}
-        resizeMode="contain"
-      />
-    </TouchableOpacity>
-  )
+    buttonVisible ? (
+      <View style={styles.container}>
+        {press ? (
+          <ActivityIndicator size="large" color="#fff" />
+        ) : (
+          <TouchableOpacity onPress={onPress}>
+            <Image
+              source={require('./images/cloud_download.png')}
+              style={styles.image}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        )}
+      </View>
+    ) : null
+  );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    // Add styles as needed
+  },
   image: {
     width: 50,
     height: 50,

@@ -1,4 +1,4 @@
-import { StyleSheet, View, Image, SafeAreaView, Platform, ScrollView,Text , Button, Linking, TouchableOpacity, CameraRoll,NativeModules, ImageBackground,Modal} from 'react-native';
+import { StyleSheet, View, Image, SafeAreaView, Platform, ScrollView,Text , Button, Linking, TouchableOpacity, CameraRoll,NativeModules, ImageBackground,Modal,TouchableWithoutFeedback} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -125,13 +125,28 @@ export default function Home() {
         />
       </View>
 
-        {items.map((item, index) => (
-          <TouchableOpacity key={index} style={styles.itemContainer} onPress={() => handleImagePress(
-            item.thumbnail.includes('https') ? item.thumbnail : `https://www.palettex.ca/images/items/${item.itemId}/${item.thumbnail}`,item.downloadList[0].link
+      {items.map((item, index) => (
+        <TouchableWithoutFeedback
+          key={index}
+          onPress={() => handleImagePress(
+            item.thumbnail.includes('https')
+              ? item.thumbnail
+              : `https://www.palettex.ca/images/items/${item.itemId}/${item.thumbnail}`,
+            item.downloadList[0].link
           )}>
-          <Image source={{ uri: item.thumbnail.includes('https') ? item.thumbnail : `https://www.palettex.ca/images/items/${item.itemId}/${item.thumbnail}` }} style={styles.thumbnail} />
-        </TouchableOpacity>
-        ))}
+          <View style={styles.itemContainer}>
+            <Image
+              source={{
+                uri: item.thumbnail.includes('https')
+                  ? item.thumbnail
+                  : `https://www.palettex.ca/images/items/${item.itemId}/${item.thumbnail}`,
+              }}
+              style={styles.thumbnail}
+              resizeMode="cover" // Adjust resizeMode as needed
+            />
+          </View>
+        </TouchableWithoutFeedback>
+      ))}
 
         <Modal
           animationType={'fade'}
