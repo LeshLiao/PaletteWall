@@ -7,6 +7,7 @@ import * as FileSystem from 'expo-file-system';
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import Menu from './Menu';
+import TopFlashList from './TopFlatList'
 
 export default function Home() {
   const [items, setItems] = useState([]);
@@ -112,18 +113,21 @@ export default function Home() {
     // <SafeAreaView style={styles.container}>
     <>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-      <BannerAd
+      {/* <BannerAd
           unitId={"ca-app-pub-2358475138249813/5341581079"}
           size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />
-      <Text style={styles.title}>Wallpaper</Text>
+        /> */}
+      {/* <TopCarousel/> */}
       <View>
+        <TopFlashList/>
+      </View>
+      {/* <View>
         <Button
           title="Download Live Photo"
           onPress={downloadLivePhoto}
           color="#333"
         />
-      </View>
+      </View> */}
 
       {items.map((item, index) => (
         <TouchableWithoutFeedback
@@ -199,10 +203,6 @@ const styles = StyleSheet.create({
     width: '100%',
     aspectRatio: 9 / 18, // Adjusted to 9:16 ratio
     borderRadius: 10, // Rounded corners for images
-  },
-  title: {
-    fontSize: 25,
-    color: '#333',
   },
   modal: {
     flex: 1,
