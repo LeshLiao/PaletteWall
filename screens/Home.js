@@ -1,10 +1,9 @@
-import { StyleSheet, View, Image, SafeAreaView, Platform, ScrollView,Text , Button, Linking, TouchableOpacity, CameraRoll,NativeModules, ImageBackground,Modal,TouchableWithoutFeedback} from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, View, Image, Platform, ScrollView, Text , Button, Linking, TouchableOpacity, NativeModules, ImageBackground,Modal, TouchableWithoutFeedback} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
-import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
+import { useNavigation } from '@react-navigation/native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import Menu from './Menu';
 import TopFlashList from './TopFlatList'
@@ -30,7 +29,6 @@ export default function Home() {
 
   useEffect(() => {
     getAllItems().then(items => setItems(items));
-
   }, []);
 
   const downloadLivePhoto = async () => {
@@ -110,17 +108,17 @@ export default function Home() {
   };
 
   return (
-    // <SafeAreaView style={styles.container}>
     <>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-      {/* <BannerAd
-          unitId={"ca-app-pub-2358475138249813/5341581079"}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        /> */}
-      {/* <TopCarousel/> */}
-      <View>
-        <TopFlashList/>
-      </View>
+      {Platform.OS === 'ios' && ( // set dragging down background color to black
+        <View style={styles.behindScrollView} />
+      )}
+
+      {/* <BannerAd unitId={"ca-app-pub-2358475138249813/5341581079"}
+                size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}/> */}
+
+      <View><TopFlashList/></View>
+
       {/* <View>
         <Button
           title="Download Live Photo"
@@ -175,18 +173,12 @@ export default function Home() {
       </Modal>
       </ScrollView>
     </>
-    // </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    // backgroundColor: '#fff',
-    // marginTop: Platform.OS === 'android' ? StatusBar.height : 100,
-  },
   scrollViewContent: {
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
     flexGrow: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -226,4 +218,12 @@ const styles = StyleSheet.create({
     alignItems: 'center', // Adjust as needed
     marginBottom: 35, // Adjust as needed to leave space from the bottom
   },
+  behindScrollView: {
+    backgroundColor: '#000',
+    height: 1000,
+    position: 'absolute',
+    top: -1000,
+    left: 0,
+    right: 0,
+  }
 });
