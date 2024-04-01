@@ -2,13 +2,14 @@
 import React, { useState } from 'react';
 import { Dimensions, View,Image, StyleSheet ,FlatList,TouchableHighlight } from 'react-native';
 
-export default function TopFlashList() {
+export default function TopFlatList({ myFunc }) {
   const width = Dimensions.get('window').width * 0.85;
   const height = width * 0.26;
-  console.log('width='+width)
+
   const testFunc = (index) => {
     console.log('testFunc');
     console.log(index);
+    myFunc(index);
   }
 
   const [images] = useState([

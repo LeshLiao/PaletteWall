@@ -1,4 +1,4 @@
-import { StyleSheet, View, Image, Platform, ScrollView, Text , Button, Linking, TouchableOpacity, NativeModules, ImageBackground,Modal, TouchableWithoutFeedback} from 'react-native';
+import { StyleSheet, View, Image, Platform, ScrollView, Text , Button, Linking, TouchableOpacity, NativeModules, ImageBackground,Modal, TouchableWithoutFeedback,Dimensions} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import * as MediaLibrary from 'expo-media-library';
@@ -6,7 +6,7 @@ import * as FileSystem from 'expo-file-system';
 import { useNavigation } from '@react-navigation/native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import Menu from './Menu';
-import TopFlashList from './TopFlatList'
+import TopFlatList from './TopFlatList'
 
 export default function Home() {
   const [items, setItems] = useState([]);
@@ -25,11 +25,27 @@ export default function Home() {
     return data;
   };
 
+  const getItemsByTag = async tag => {
+    const { data } = await axios.get('/api/items/tag/' + tag)
+    return data
+  }
+
   const {CustomMethods} = NativeModules;
 
   useEffect(() => {
     getAllItems().then(items => setItems(items));
   }, []);
+
+  const testCallBack = (index) => {
+    if (index == 0)
+      getItemsByTag('Landscape').then(items => setItems(items));
+    else if (index == 1)
+      getItemsByTag('City').then(items => setItems(items));
+    else if (index == 2)
+      getItemsByTag('Anime').then(items => setItems(items));
+
+    console.log('testCallBack()='+index);
+  }
 
   const downloadLivePhoto = async () => {
     const imageUrl = 'https://firebasestorage.googleapis.com/v0/b/palettex-37930.appspot.com/o/digital_file%2FE5712677-FC33-494F-93BB-A525A183C659.HEIC?alt=media&token=2f53a02b-1520-4d40-a9ac-99b5c20b9e0b'; // URL or path to the still image
@@ -109,15 +125,12 @@ export default function Home() {
 
   return (
     <>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-      {Platform.OS === 'ios' && ( // set dragging down background color to black
-        <View style={styles.behindScrollView} />
-      )}
+      <ScrollView contentContainerStyle={styles.scrollViewContent} bounces='false'>
 
       {/* <BannerAd unitId={"ca-app-pub-2358475138249813/5341581079"}
                 size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}/> */}
 
-      <View><TopFlashList/></View>
+      <View><TopFlatList myFunc={testCallBack}/></View>
 
       {/* <View>
         <Button
@@ -163,12 +176,13 @@ export default function Home() {
           <View style={styles.menuContainer}>
             <Menu link={downloadLink}/>
           </View>
-          <Button
-            title='Click to close========'
-            onPress={() => {
-              setShowModal(false);
-            }}
-          />
+          <TouchableOpacity onPress={() => {setShowModal(false);}} style={styles.touch_back}>
+            <Image
+              source={require('./images/back_img.png')}
+              style={styles.image_back}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
         </ImageBackground>
       </Modal>
       </ScrollView>
@@ -218,12 +232,14 @@ const styles = StyleSheet.create({
     alignItems: 'center', // Adjust as needed
     marginBottom: 35, // Adjust as needed to leave space from the bottom
   },
-  behindScrollView: {
-    backgroundColor: '#000',
-    height: 1000,
+  image_back: {
+    width: 35,
+    height: 35,
+  },
+  touch_back: {
     position: 'absolute',
-    top: -1000,
-    left: 0,
-    right: 0,
+    top: 60,
+    left: 20,
+    opacity: 0.35,
   }
 });

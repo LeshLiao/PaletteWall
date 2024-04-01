@@ -37,7 +37,7 @@ export default function Menu({link}){
 
     // Unsubscribe from events on unmount
     return () => {
-      console.log('unmount===')
+      // console.log('unmount===')
       unsubscribeLoaded();
       unsubscribeEarned();
     };
@@ -104,7 +104,7 @@ export default function Menu({link}){
         {press ? (
           <ActivityIndicator size="large" color="#fff" />
         ) : (
-          <TouchableOpacity onPress={onPress}>
+          <TouchableOpacity onPress={onPress} style={styles.touch}>
             <Image
               source={require('./images/cloud_download.png')}
               style={styles.image}
@@ -122,7 +122,11 @@ const styles = StyleSheet.create({
     // Add styles as needed
   },
   image: {
-    width: 50,
-    height: 50,
+    width: 45,
+    height: 45,
+    opacity: 0.8,
+  },
+  touch: {
+    marginBottom: 20,
   },
 });
