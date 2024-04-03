@@ -1,4 +1,4 @@
-import {Button,StyleSheet,TouchableOpacity,Image,View,ActivityIndicator} from 'react-native';
+import {Button,StyleSheet,TouchableOpacity,Image,View,ActivityIndicator,Alert} from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { RewardedAd, RewardedAdEventType, TestIds } from 'react-native-google-mobile-ads';
 import React, { useEffect, useState } from 'react';
@@ -83,7 +83,8 @@ export default function Menu({link}){
         .then(({ uri }) => {
           console.log('img uri='+uri);
           MediaLibrary.saveToLibraryAsync(uri);
-          alert('Download Succeeded!')
+          Alert.alert('','Download Succeeded!');
+
         })
         .catch(error => {
           console.log(error);

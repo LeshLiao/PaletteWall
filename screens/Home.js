@@ -1,4 +1,4 @@
-import { StyleSheet, View, Image, Platform, ScrollView, Text , Button, Linking, TouchableOpacity, NativeModules, ImageBackground,Modal, TouchableWithoutFeedback,Dimensions} from 'react-native';
+import { StyleSheet, View, Image, Platform, ScrollView, Text , Button, Linking, TouchableOpacity, NativeModules, ImageBackground,Modal, TouchableWithoutFeedback,Alert} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import * as MediaLibrary from 'expo-media-library';
@@ -48,20 +48,35 @@ export default function Home() {
   }
 
   const downloadLivePhoto = async () => {
-    const imageUrl = 'https://firebasestorage.googleapis.com/v0/b/palettex-37930.appspot.com/o/digital_file%2FE5712677-FC33-494F-93BB-A525A183C659.HEIC?alt=media&token=2f53a02b-1520-4d40-a9ac-99b5c20b9e0b'; // URL or path to the still image
-    const videoUrl = 'https://firebasestorage.googleapis.com/v0/b/palettex-37930.appspot.com/o/digital_file%2FE5712677-FC33-494F-93BB-A525A183C659.MOV?alt=media&token=c9a6bd75-59ac-48e5-900f-4e03dab70270'; // URL or path to the video file
+    let imageUrl = 'https://firebasestorage.googleapis.com/v0/b/palettex-37930.appspot.com/o/digital_file%2FE5712677-FC33-494F-93BB-A525A183C659.HEIC?alt=media&token=2f53a02b-1520-4d40-a9ac-99b5c20b9e0b';
+
+    let videoUrl = 'https://firebasestorage.googleapis.com/v0/b/palettex-37930.appspot.com/o/digital_file%2FE5712677-FC33-494F-93BB-A525A183C659.MOV?alt=media&token=c9a6bd75-59ac-48e5-900f-4e03dab70270';
 
     const imageUri = await saveToCameraRoll(imageUrl,videoUrl);
     // const videoUri = await saveVideo(videoUrl);
   };
+  let fileName_image = 'temp.HEIC';
+  let fileName_video = 'temp.MOV';
+
+  // let fileName_image = 'test.mp4';
+  // let fileName_video = 'test.jpg';
 
   const testNativeModule = () => {
     console.log('call testNativeModule()');
     CustomMethods.MyMethod('this is test');
     console.log('varMyImage='+varMyImage);
     console.log('varMyVideo='+varMyVideo);
-    CustomMethods.combineImage(varMyImage, varMyVideo);
-    alert('Live photo saved!');
+    // CustomMethods.combineImage(varMyImage, varMyVideo);
+
+    CustomMethods.combineImage(varMyImage, varMyVideo)
+    .then(response => {
+      console.log('Success:', response);
+      Alert.alert('','Live photo saved! Success:' + response);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error:'+error);
+    });
   }
 
   const saveToCameraRoll = async (image, video) => {
@@ -73,7 +88,7 @@ export default function Home() {
     if (cameraPermissions.status === 'granted') {
       FileSystem.downloadAsync(
         image,
-        FileSystem.documentDirectory + 'E5712677-FC33-494F-93BB-A525A183C659.HEIC'
+        FileSystem.documentDirectory + fileName_image
       )
         .then(({ uri }) => {
           console.log('img uri='+uri);
@@ -99,7 +114,7 @@ export default function Home() {
     if (cameraPermissions.status === 'granted') {
       FileSystem.downloadAsync(
         video,
-        FileSystem.documentDirectory + 'E5712677-FC33-494F-93BB-A525A183C659.MOV'
+        FileSystem.documentDirectory + fileName_video
       )
         .then(({ uri }) => {
           console.log('video uri='+uri);
@@ -141,32 +156,42 @@ export default function Home() {
       </View> */}
 
       {items.map((item, index) => (
-        <TouchableWithoutFeedback
-          key={index}
-          onPress={() => handleImagePress(
-            item.thumbnail.includes('https')
-              ? item.thumbnail
-              : `https://www.palettex.ca/images/items/${item.itemId}/${item.thumbnail}`,
-            item.downloadList[0].link
-          )}>
-          <View style={styles.itemContainer}>
-            <Image
-              source={{
-                uri: item.thumbnail.includes('https')
-                  ? item.thumbnail
-                  : `https://www.palettex.ca/images/items/${item.itemId}/${item.thumbnail}`,
-              }}
-              style={styles.thumbnail}
-              resizeMode="cover" // Adjust resizeMode as needed
-            />
-          </View>
-        </TouchableWithoutFeedback>
-      ))}
+          <React.Fragment key={index}>
+            {index % 10 === 0 && index !== 0 && (
+              <BannerAd
+                unitId={"ca-app-pub-2358475138249813/5341581079"}
+                size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+              />
+            )}
+            <TouchableWithoutFeedback
+              onPress={() =>
+                handleImagePress(
+                  item.thumbnail.includes("https")
+                    ? item.thumbnail
+                    : `https://www.palettex.ca/images/items/${item.itemId}/${item.thumbnail}`,
+                  item.downloadList[0].link
+                )
+              }
+            >
+              <View style={styles.itemContainer}>
+                <Image
+                  source={{
+                    uri: item.thumbnail.includes("https")
+                      ? item.thumbnail
+                      : `https://www.palettex.ca/images/items/${item.itemId}/${item.thumbnail}`,
+                  }}
+                  style={styles.thumbnail}
+                  resizeMode="cover" // Adjust resizeMode as needed
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </React.Fragment>
+        ))}
 
         <Modal
           animationType={'fade'}
-          // animationType={'none'}
-          transparent={false}
+          // animationType={'slide'}
+          transparent={true} // if set false, sometimes will freeze.
           visible={showModal}
           onRequestClose={() => {
               console.log('close....')

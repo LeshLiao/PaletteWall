@@ -70,5 +70,7 @@
     <true/>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>We need access to your photo library to allow you to download images.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photo library to allow you to download images.</string>
   </dict>
 </plist>
