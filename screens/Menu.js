@@ -2,15 +2,16 @@ import {Button,StyleSheet,TouchableOpacity,Image,View,ActivityIndicator,Alert} f
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { RewardedAd, RewardedAdEventType, TestIds } from 'react-native-google-mobile-ads';
 import React, { useEffect, useState } from 'react';
-import * as MediaLibrary from 'expo-media-library';
-import * as FileSystem from 'expo-file-system';
+import { saveStaticPhoto, saveLivePhoto } from '../service/MediaFunctions';
+
+const adUnitId = __DEV__ ? TestIds.REWARDED : 'ca-app-pub-2358475138249813/8159531709';
 
 const rewarded = RewardedAd.createForAdRequest(
-  'ca-app-pub-2358475138249813/8159531709', {
-  keywords: ['fashion', 'clothing'],
+  adUnitId, {
+  keywords: ['wallpaper', 'joy'],
 });
 
-export default function Menu({link}){
+export default function Menu({downloadList, photoType}){
   const { showActionSheetWithOptions } = useActionSheet();
   const [loaded, setLoaded] = useState(false);
   const [press, setPress] = useState(false);
@@ -29,8 +30,9 @@ export default function Menu({link}){
       RewardedAdEventType.EARNED_REWARD,
       reward => {
         console.log('User earned reward of ', reward);
-        console.log('link='+link);
-        saveToCameraRoll(link);
+        console.log('photoType=' + photoType);
+        if (photoType === 'static') saveStaticPhoto(downloadList[0].link);
+        if (photoType === 'live') saveLivePhoto(downloadList[0].link, downloadList[1].link);
         setButtonVisible(false);
       },
     );
@@ -44,7 +46,7 @@ export default function Menu({link}){
   }, []);
 
   const onPress = () => {
-    console.log('onPress=======')
+    console.log('onPress()')
     const options = ['Watch Ads', 'Go Premium', 'Cancel'];
     const destructiveButtonIndex = 0;
     const cancelButtonIndex = 2;
@@ -68,31 +70,6 @@ export default function Menu({link}){
           console.log('Cancel');
       }});
   }
-
-  const saveToCameraRoll = async (image) => {
-    let cameraPermissions = await MediaLibrary.getPermissionsAsync();
-    if (cameraPermissions.status !== 'granted') {
-      cameraPermissions = await MediaLibrary.requestPermissionsAsync();
-    }
-
-    if (cameraPermissions.status === 'granted') {
-      FileSystem.downloadAsync(
-        image,
-        FileSystem.documentDirectory + 'E5712677-FC33-494F-93BB-A525A183C659.HEIC'
-      )
-        .then(({ uri }) => {
-          console.log('img uri='+uri);
-          MediaLibrary.saveToLibraryAsync(uri);
-          Alert.alert('','Download Succeeded!');
-
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    } else {
-      alert('Requires camera roll permission');
-    }
-  };
 
   // No advert ready to show yet
   // if (!loaded) {

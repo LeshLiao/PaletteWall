@@ -7,16 +7,17 @@ import { useNavigation } from '@react-navigation/native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import Menu from './Menu';
 import TopFlatList from './TopFlatList'
+import { saveLivePhoto } from '../service/MediaFunctions';
+
+const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-2358475138249813/5341581079';
 
 export default function Home() {
   const [items, setItems] = useState([]);
   const navigation = useNavigation(); // Get the navigation object
   const [showModal, setShowModal] = useState(false);
   const [modalImg, setModalImg] = useState('');
-  const [downloadLink, setDownloadLink] = useState('');
-
-  let varMyImage = '';
-  let varMyVideo = '';
+  const [downloadList, setDownloadList] = useState('');
+  const [photoType, setPhotoType] = useState('');
 
   axios.defaults.baseURL = 'https://online-store-service.onrender.com';
 
@@ -27,6 +28,11 @@ export default function Home() {
 
   const getItemsByTag = async tag => {
     const { data } = await axios.get('/api/items/tag/' + tag)
+    return data
+  }
+
+  const getAllStatic = async () => {
+    const { data } = await axios.get('/api/items/photoType/live')
     return data
   }
 
@@ -42,126 +48,49 @@ export default function Home() {
     else if (index == 1)
       getItemsByTag('City').then(items => setItems(items));
     else if (index == 2)
-      getItemsByTag('Anime').then(items => setItems(items));
+      getAllStatic().then(items => setItems(items));
 
     console.log('testCallBack()='+index);
   }
 
   const downloadLivePhoto = async () => {
-    let imageUrl = 'https://firebasestorage.googleapis.com/v0/b/palettex-37930.appspot.com/o/digital_file%2FE5712677-FC33-494F-93BB-A525A183C659.HEIC?alt=media&token=2f53a02b-1520-4d40-a9ac-99b5c20b9e0b';
+    let imageUrl = 'https://firebasestorage.googleapis.com/v0/b/palettex-37930.appspot.com/o/images%2Fitems%2F200001%2F5983a8ec-e2ed-45b8-af01-3223c91221e7IMB_jF4Z8r.HEIC?alt=media&token=8702ddfa-53bb-4f77-b68f-577b83d51014';
 
-    let videoUrl = 'https://firebasestorage.googleapis.com/v0/b/palettex-37930.appspot.com/o/digital_file%2FE5712677-FC33-494F-93BB-A525A183C659.MOV?alt=media&token=c9a6bd75-59ac-48e5-900f-4e03dab70270';
+    let videoUrl = 'https://firebasestorage.googleapis.com/v0/b/palettex-37930.appspot.com/o/images%2Fitems%2F200001%2F27b8d278-a26f-4878-b5c2-88b52d039e14IMB_jF4Z8r.MOV?alt=media&token=8e3ccb03-47f2-4ba4-a9c2-2c10ff72b0ee';
 
-    const imageUri = await saveToCameraRoll(imageUrl,videoUrl);
-    // const videoUri = await saveVideo(videoUrl);
-  };
-  let fileName_image = 'temp.HEIC';
-  let fileName_video = 'temp.MOV';
-
-  // let fileName_image = 'test.mp4';
-  // let fileName_video = 'test.jpg';
-
-  const testNativeModule = () => {
-    console.log('call testNativeModule()');
-    CustomMethods.MyMethod('this is test');
-    console.log('varMyImage='+varMyImage);
-    console.log('varMyVideo='+varMyVideo);
-    // CustomMethods.combineImage(varMyImage, varMyVideo);
-
-    CustomMethods.combineImage(varMyImage, varMyVideo)
-    .then(response => {
-      console.log('Success:', response);
-      Alert.alert('','Live photo saved! Success:' + response);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('Error:'+error);
-    });
-  }
-
-  const saveToCameraRoll = async (image, video) => {
-    let cameraPermissions = await MediaLibrary.getPermissionsAsync();
-    if (cameraPermissions.status !== 'granted') {
-      cameraPermissions = await MediaLibrary.requestPermissionsAsync();
-    }
-
-    if (cameraPermissions.status === 'granted') {
-      FileSystem.downloadAsync(
-        image,
-        FileSystem.documentDirectory + fileName_image
-      )
-        .then(({ uri }) => {
-          console.log('img uri='+uri);
-          varMyImage = uri;
-          // MediaLibrary.saveToLibraryAsync(uri);
-          // alert('Photo Saved to photos');
-          saveVideo(video);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    } else {
-      alert('Requires camera roll permission');
-    }
+    await saveLivePhoto(imageUrl,videoUrl);
   };
 
-  const saveVideo = async (video) => {
-    let cameraPermissions = await MediaLibrary.getPermissionsAsync();
-    if (cameraPermissions.status !== 'granted') {
-      cameraPermissions = await MediaLibrary.requestPermissionsAsync();
-    }
-
-    if (cameraPermissions.status === 'granted') {
-      FileSystem.downloadAsync(
-        video,
-        FileSystem.documentDirectory + fileName_video
-      )
-        .then(({ uri }) => {
-          console.log('video uri='+uri);
-          varMyVideo = uri;
-          // MediaLibrary.saveToLibraryAsync(uri);
-          testNativeModule();
-          // alert('Video Saved to photos');
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    } else {
-      alert('Requires camera roll permission');
-    }
-  };
-
-  const handleImagePress = (imageUri, link) => {
+  const handleImagePress = (imageUri, downloadList, photoType) => {
     // navigation.navigate('Preview', { imageUri, link });
     setModalImg(imageUri);
     setShowModal(true);
-    setDownloadLink(link);
+    setDownloadList(downloadList);
+    setPhotoType(photoType);
   };
 
   return (
     <>
       <ScrollView contentContainerStyle={styles.scrollViewContent} bounces='false'>
-
-      {/* <BannerAd unitId={"ca-app-pub-2358475138249813/5341581079"}
-                size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}/> */}
-
       <View><TopFlatList myFunc={testCallBack}/></View>
 
       {/* <View>
         <Button
           title="Download Live Photo"
           onPress={downloadLivePhoto}
-          color="#333"
+          color="#999"
         />
       </View> */}
 
       {items.map((item, index) => (
           <React.Fragment key={index}>
             {index % 10 === 0 && index !== 0 && (
-              <BannerAd
-                unitId={"ca-app-pub-2358475138249813/5341581079"}
-                size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-              />
+              <View style={styles.BannerAdStyle}>
+                <BannerAd
+                  unitId={adUnitId}
+                  size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+                />
+              </View>
             )}
             <TouchableWithoutFeedback
               onPress={() =>
@@ -169,7 +98,8 @@ export default function Home() {
                   item.thumbnail.includes("https")
                     ? item.thumbnail
                     : `https://www.palettex.ca/images/items/${item.itemId}/${item.thumbnail}`,
-                  item.downloadList[0].link
+                  item.downloadList,
+                  item.photoType
                 )
               }
             >
@@ -199,7 +129,7 @@ export default function Home() {
 
         <ImageBackground source={{ uri: modalImg }} style={styles.imageBackground}>
           <View style={styles.menuContainer}>
-            <Menu link={downloadLink}/>
+            <Menu downloadList={downloadList} photoType={photoType}/>
           </View>
           <TouchableOpacity onPress={() => {setShowModal(false);}} style={styles.touch_back}>
             <Image
@@ -219,21 +149,22 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     backgroundColor: '#000',
     flexGrow: 1,
+
     flexDirection: 'row',
     flexWrap: 'wrap',
     // justifyContent: 'space-between',
-    justifyContent: "center",
+    justifyContent: 'flex-start',
     paddingVertical: 10,
   },
   itemContainer: {
-    width: '49%', // Adjust the width as per your layout
-    marginVertical: '0.66%',
-    paddingHorizontal: '0.66%',
+    width: '50%', // Adjust the width as per your layout
+    // marginVertical: '0.66%',
+    // paddingHorizontal: '0.66%',
   },
   thumbnail: {
     width: '100%',
     aspectRatio: 9 / 18, // Adjusted to 9:16 ratio
-    borderRadius: 10, // Rounded corners for images
+    // borderRadius: 10, // Rounded corners for images
   },
   modal: {
     flex: 1,
@@ -263,8 +194,15 @@ const styles = StyleSheet.create({
   },
   touch_back: {
     position: 'absolute',
-    top: 60,
+    top: 80,
     left: 20,
     opacity: 0.35,
+    // borderWidth: 1,
+    // borderColor: 'red',
+    paddingRight: 50,
+    paddingBottom: 50,
+  },
+  BannerAdStyle: {
+    // margin: 3,
   }
 });
