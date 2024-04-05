@@ -1,23 +1,22 @@
-import { StyleSheet, View, Image, Platform, ScrollView, Text , Button, Linking, TouchableOpacity, NativeModules, ImageBackground,Modal, TouchableWithoutFeedback,Alert} from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Image, Platform, ScrollView, TouchableOpacity, ImageBackground,Modal, TouchableWithoutFeedback} from 'react-native';
+import React, { useEffect, useState} from 'react';
 import axios from 'axios';
-import * as MediaLibrary from 'expo-media-library';
-import * as FileSystem from 'expo-file-system';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import Menu from './Menu';
 import TopFlatList from './TopFlatList'
-import { saveLivePhoto } from '../service/MediaFunctions';
+import Video from 'react-native-video';
 
 const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-2358475138249813/5341581079';
 
 export default function Home() {
   const [items, setItems] = useState([]);
-  const navigation = useNavigation(); // Get the navigation object
+  // const navigation = useNavigation(); // Get the navigation object
   const [showModal, setShowModal] = useState(false);
   const [modalImg, setModalImg] = useState('');
   const [downloadList, setDownloadList] = useState('');
   const [photoType, setPhotoType] = useState('');
+  const [videoLink, setVideoLink] = useState('');
 
   axios.defaults.baseURL = 'https://online-store-service.onrender.com';
 
@@ -36,8 +35,6 @@ export default function Home() {
     return data
   }
 
-  const {CustomMethods} = NativeModules;
-
   useEffect(() => {
     getAllItems().then(items => setItems(items));
   }, []);
@@ -49,17 +46,7 @@ export default function Home() {
       getItemsByTag('City').then(items => setItems(items));
     else if (index == 2)
       getAllStatic().then(items => setItems(items));
-
-    console.log('testCallBack()='+index);
   }
-
-  const downloadLivePhoto = async () => {
-    let imageUrl = 'https://firebasestorage.googleapis.com/v0/b/palettex-37930.appspot.com/o/images%2Fitems%2F200001%2F5983a8ec-e2ed-45b8-af01-3223c91221e7IMB_jF4Z8r.HEIC?alt=media&token=8702ddfa-53bb-4f77-b68f-577b83d51014';
-
-    let videoUrl = 'https://firebasestorage.googleapis.com/v0/b/palettex-37930.appspot.com/o/images%2Fitems%2F200001%2F27b8d278-a26f-4878-b5c2-88b52d039e14IMB_jF4Z8r.MOV?alt=media&token=8e3ccb03-47f2-4ba4-a9c2-2c10ff72b0ee';
-
-    await saveLivePhoto(imageUrl,videoUrl);
-  };
 
   const handleImagePress = (imageUri, downloadList, photoType) => {
     // navigation.navigate('Preview', { imageUri, link });
@@ -67,21 +54,15 @@ export default function Home() {
     setShowModal(true);
     setDownloadList(downloadList);
     setPhotoType(photoType);
+    if(photoType === 'live') {
+      setVideoLink(downloadList[1].link);
+    }
   };
 
   return (
     <>
       <ScrollView contentContainerStyle={styles.scrollViewContent} bounces='false'>
       <View><TopFlatList myFunc={testCallBack}/></View>
-
-      {/* <View>
-        <Button
-          title="Download Live Photo"
-          onPress={downloadLivePhoto}
-          color="#999"
-        />
-      </View> */}
-
       {items.map((item, index) => (
           <React.Fragment key={index}>
             {index % 10 === 0 && index !== 0 && (
@@ -119,14 +100,15 @@ export default function Home() {
         ))}
 
         <Modal
-          animationType={'fade'}
-          // animationType={'slide'}
+          // animationType={'fade'}
+          animationType={'slide'}
           transparent={true} // if set false, sometimes will freeze.
           visible={showModal}
           onRequestClose={() => {
               console.log('close....')
         }}>
 
+        { photoType === 'static' ?
         <ImageBackground source={{ uri: modalImg }} style={styles.imageBackground}>
           <View style={styles.menuContainer}>
             <Menu downloadList={downloadList} photoType={photoType}/>
@@ -139,6 +121,31 @@ export default function Home() {
             />
           </TouchableOpacity>
         </ImageBackground>
+        :
+        <>
+        <Video source={{uri: videoLink}}   // Can be a URL or a local file.
+        // ref={(ref) => {
+        //   this.player = ref
+        // }}
+        // ref={videoRef}                                      // Store reference
+        // onBuffer={this.onBuffer}                // Callback when remote video is buffering
+        // onLoad={()=> callLoad()}
+        // onError={()=> callError()}                // Callback when video cannot be loaded
+        // onEnd={() => callEnd()}
+        rate={0.38}
+        resizeMode={"cover"}
+        style={styles.backgroundVideo}/>
+          <View style={styles.menuContainer}>
+            <Menu downloadList={downloadList} photoType={photoType}/>
+          </View>
+          <TouchableOpacity onPress={() => {setShowModal(false);}} style={styles.touch_back}>
+            <Image
+              source={require('./images/back_img.png')}
+              style={styles.image_back}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        </>}
       </Modal>
       </ScrollView>
     </>
@@ -204,5 +211,15 @@ const styles = StyleSheet.create({
   },
   BannerAdStyle: {
     // margin: 3,
-  }
+  },
+  backgroundVideo: {
+    // backgroundColor: '#ff0000',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Red with 50% opacity
+    position: 'absolute',
+    height: '100%',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  },
 });
