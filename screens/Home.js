@@ -1,5 +1,5 @@
 import { StyleSheet, View, Image, Platform, ScrollView, TouchableOpacity, ImageBackground,Modal, TouchableWithoutFeedback} from 'react-native';
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import axios from 'axios';
 // import { useNavigation } from '@react-navigation/native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
@@ -17,6 +17,9 @@ export default function Home() {
   const [downloadList, setDownloadList] = useState('');
   const [photoType, setPhotoType] = useState('');
   const [videoLink, setVideoLink] = useState('');
+  const [isPaused, setIsPaused] = useState(true);
+  const videoRef = useRef();
+  let timeoutID = useRef();
 
   axios.defaults.baseURL = 'https://online-store-service.onrender.com';
 
@@ -41,7 +44,7 @@ export default function Home() {
 
   const testCallBack = (index) => {
     if (index == 0)
-      getItemsByTag('Landscape').then(items => setItems(items));
+      getItemsByTag('Painting').then(items => setItems(items));
     else if (index == 1)
       getItemsByTag('City').then(items => setItems(items));
     else if (index == 2)
@@ -58,6 +61,27 @@ export default function Home() {
       setVideoLink(downloadList[1].link);
     }
   };
+
+  const onLoad = (data) => {
+    // console.log({ data });
+    clearTimeout(timeoutID.current);
+    if (videoRef.current) {
+      timeoutID.current = setTimeout(() => {
+        setIsPaused(false);
+        // console.log('seek()')
+        // Call the seek() method with the desired position
+        videoRef.current.seek(0);
+      }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    if(showModal === false) {
+      // console.log('showModal false, clear timeout');
+      clearTimeout(timeoutID.current);
+      setIsPaused(true);
+    }
+  }, [showModal]);
 
   return (
     <>
@@ -102,11 +126,10 @@ export default function Home() {
         <Modal
           // animationType={'fade'}
           animationType={'slide'}
-          transparent={true} // if set false, sometimes will freeze.
+          transparent={true} // if set it false, sometimes will freeze.
           visible={showModal}
-          onRequestClose={() => {
-              console.log('close....')
-        }}>
+          onOverlayClick={() => { console.log('close...'); }
+        }>
 
         { photoType === 'static' ?
         <ImageBackground source={{ uri: modalImg }} style={styles.imageBackground}>
@@ -123,15 +146,13 @@ export default function Home() {
         </ImageBackground>
         :
         <>
-        <Video source={{uri: videoLink}}   // Can be a URL or a local file.
+        <Video source={{uri: videoLink}}
         // ref={(ref) => {
         //   this.player = ref
         // }}
-        // ref={videoRef}                                      // Store reference
-        // onBuffer={this.onBuffer}                // Callback when remote video is buffering
-        // onLoad={()=> callLoad()}
-        // onError={()=> callError()}                // Callback when video cannot be loaded
-        // onEnd={() => callEnd()}
+        ref={videoRef}    // Store reference
+        onLoad={onLoad}
+        paused={isPaused} // Disable autoplay at begin
         rate={0.38}
         resizeMode={"cover"}
         style={styles.backgroundVideo}/>
