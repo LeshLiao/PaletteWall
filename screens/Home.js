@@ -71,7 +71,7 @@ export default function Home() {
         // console.log('seek()')
         // Call the seek() method with the desired position
         videoRef.current.seek(0);
-      }, 1000);
+      }, 500);
     }
   };
 
