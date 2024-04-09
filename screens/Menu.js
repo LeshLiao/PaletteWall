@@ -11,7 +11,7 @@ const rewarded = RewardedAd.createForAdRequest(
   keywords: ['wallpaper', 'joy'],
 });
 
-export default function Menu({downloadList, photoType}){
+export default function Menu({downloadList, photoType, isFree}){
   const { showActionSheetWithOptions } = useActionSheet();
   const [loaded, setLoaded] = useState(false);
   const [press, setPress] = useState(false);
@@ -47,28 +47,43 @@ export default function Menu({downloadList, photoType}){
 
   const onPress = () => {
     console.log('onPress()')
-    const options = ['Watch Ads', 'Go Premium', 'Cancel'];
-    const destructiveButtonIndex = 0;
-    const cancelButtonIndex = 2;
+
+    let options = [];
+    let goPremiumIndex = 0;
+    let cancelIndex = 1;
+
+    if (isFree === true) {
+      options = ['Watch Ads', 'Go Premium', 'Cancel'];
+      goPremiumIndex = 1;
+      cancelIndex = 2;
+    } else {
+      options = ['Go Premium', 'Cancel'];
+    }
 
     showActionSheetWithOptions({
       options,
-      cancelButtonIndex,
-      destructiveButtonIndex
+      cancelButtonIndex: cancelIndex,
     }, (selectedIndex) => {
       switch (selectedIndex) {
-        case destructiveButtonIndex:
-          console.log('Watch Ads');
-          setPress(true);
-          rewarded.load();
-          // rewarded.show();
+        case 0:
+          if (isFree === true) {
+            console.log('Watch Ads');
+            setPress(true);
+            rewarded.load();
+          } else {
+            console.log('Go Premium');
+          }
           break;
-        case 1:
+        case goPremiumIndex:
           console.log('Go Premium');
           break;
-        case cancelButtonIndex:
+        case cancelIndex:
           console.log('Cancel');
-      }});
+          break;
+        default:
+          break;
+      }
+    });
   }
 
   // No advert ready to show yet

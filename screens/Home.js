@@ -18,6 +18,7 @@ export default function Home() {
   const [photoType, setPhotoType] = useState('');
   const [videoLink, setVideoLink] = useState('');
   const [isPaused, setIsPaused] = useState(true);
+  const [isFree, setIsFree] = useState(false);
   const videoRef = useRef();
   let timeoutID = useRef();
 
@@ -51,12 +52,13 @@ export default function Home() {
       getAllStatic().then(items => setItems(items));
   }
 
-  const handleImagePress = (imageUri, downloadList, photoType) => {
+  const handleImagePress = (imageUri, downloadList, photoType, freeDownload) => {
     // navigation.navigate('Preview', { imageUri, link });
     setModalImg(imageUri);
     setShowModal(true);
     setDownloadList(downloadList);
     setPhotoType(photoType);
+    setIsFree(freeDownload);
     if(photoType === 'live') {
       setVideoLink(downloadList[1].link);
     }
@@ -106,7 +108,8 @@ export default function Home() {
                     ? item.thumbnail
                     : `https://www.palettex.ca/images/items/${item.itemId}/${item.thumbnail}`,
                   item.downloadList,
-                  item.photoType
+                  item.photoType,
+                  item.freeDownload
                 )
               }
             >
@@ -120,23 +123,31 @@ export default function Home() {
                   style={styles.thumbnail}
                   resizeMode="cover" // Adjust resizeMode as needed
                 />
+                {!item.freeDownload && (
+                  <Image
+                    source={require('./images/diamond.png')}
+                    style={styles.diamond}
+                    resizeMode="contain"
+                  />
+                )}
               </View>
             </TouchableWithoutFeedback>
           </React.Fragment>
         ))}
+
 
         <Modal
           // animationType={'fade'}
           animationType={'slide'}
           transparent={true} // if set it false, sometimes will freeze.
           visible={showModal}
-          onOverlayClick={() => { console.log('close...'); }
-        }>
+          onOverlayClick={() => { console.log('close...'); }}
+          >
 
         { photoType === 'static' ?
         <ImageBackground source={{ uri: modalImg }} style={styles.imageBackground}>
           <View style={styles.menuContainer}>
-            <Menu downloadList={downloadList} photoType={photoType}/>
+            <Menu downloadList={downloadList} photoType={photoType} isFree={isFree}/>
           </View>
           <TouchableOpacity onPress={() => {setShowModal(false);}} style={styles.touch_back}>
             <Image
@@ -145,6 +156,13 @@ export default function Home() {
               resizeMode="contain"
             />
           </TouchableOpacity>
+            {/* {!isFree && (
+              <Image
+                source={require('./images/diamond.png')}
+                style={styles.modalDiamond}
+                resizeMode="contain"
+              />
+            )} */}
         </ImageBackground>
         :
         <>
@@ -159,7 +177,7 @@ export default function Home() {
         resizeMode={"cover"}
         style={styles.backgroundVideo}/>
           <View style={styles.menuContainer}>
-            <Menu downloadList={downloadList} photoType={photoType}/>
+            <Menu downloadList={downloadList} photoType={photoType} isFree={isFree}/>
           </View>
           <TouchableOpacity onPress={() => {setShowModal(false);}} style={styles.touch_back}>
             <Image
@@ -215,10 +233,10 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
     justifyContent: 'flex-end', // Adjust as needed
     alignItems: 'center', // Adjust as needed
-    marginBottom: 35, // Adjust as needed to leave space from the bottom
+    // marginBottom: 35, // Adjust as needed to leave space from the bottom
+    bottom: 35,
   },
   image_back: {
     width: 35,
@@ -263,4 +281,25 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
+  diamond: {
+    position: 'absolute',
+    // top: 80,
+    left: 15,
+    bottom: 15,
+    opacity: 0.8,
+    // borderWidth: 1,
+    // borderColor: 'red',
+    // paddingRight: 50,
+    // paddingBottom: 50,
+    width: 30,
+    height: 30,
+  },
+  modalDiamond: {
+    position: 'absolute',
+    left: 35,
+    bottom: 50,
+    opacity: 0.8,
+    width: 50,
+    height: 50,
+  }
 });
