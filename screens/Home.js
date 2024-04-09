@@ -85,7 +85,9 @@ export default function Home() {
 
   return (
     <>
-      <ScrollView contentContainerStyle={styles.scrollViewContent} bounces='false'>
+      {/* <ScrollView contentContainerStyle={styles.scrollViewContent} bounces='false'> */}
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      {Platform.OS === 'ios' && (<View style={styles.topBouncingBackground}/>)}
       <View><TopFlatList myFunc={testCallBack}/></View>
       {items.map((item, index) => (
           <React.Fragment key={index}>
@@ -168,11 +170,13 @@ export default function Home() {
           </TouchableOpacity>
         </>}
       </Modal>
+      {Platform.OS === 'ios' && (<View style={styles.bottomBouncingBackground}/>)}
       </ScrollView>
     </>
   )
 }
 
+const spacerHeight = 1000;
 const styles = StyleSheet.create({
   scrollViewContent: {
     backgroundColor: '#000',
@@ -241,6 +245,22 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     bottom: 0,
+    right: 0,
+  },
+  topBouncingBackground: {
+    backgroundColor: 'black',
+    height: spacerHeight,
+    position: 'absolute',
+    top: -spacerHeight,
+    left: 0,
+    right: 0,
+  },
+  bottomBouncingBackground: {
+    backgroundColor: 'black',
+    height: spacerHeight,
+    position: 'absolute',
+    bottom: -spacerHeight,
+    left: 0,
     right: 0,
   },
 });
