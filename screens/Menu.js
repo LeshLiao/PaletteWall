@@ -97,7 +97,7 @@ export default function Menu({downloadList, photoType, isFree}){
         {press ? (
           <ActivityIndicator size="large" color="#fff" />
         ) : (
-          <TouchableOpacity onPress={onPress} style={styles.touch}>
+          <TouchableOpacity onPress={onPress}>
             <Image
               source={require('./images/cloud_download.png')}
               style={styles.image}
@@ -118,8 +118,5 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     opacity: 0.8,
-  },
-  touch: {
-    marginBottom: 20,
   },
 });

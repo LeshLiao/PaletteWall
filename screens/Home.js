@@ -230,13 +230,14 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     position: 'absolute',
+    bottom: '7%',
     top: 0,
     left: 0,
     right: 0,
-    justifyContent: 'flex-end', // Adjust as needed
-    alignItems: 'center', // Adjust as needed
-    // marginBottom: 35, // Adjust as needed to leave space from the bottom
-    bottom: 35,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    // borderWidth: 1,
+    // borderColor: 'red',
   },
   image_back: {
     width: 35,
@@ -244,19 +245,18 @@ const styles = StyleSheet.create({
   },
   touch_back: {
     position: 'absolute',
-    top: 80,
-    left: 20,
+    top: '10%',
+    left: '5%',
     opacity: 0.35,
-    // borderWidth: 1,
-    // borderColor: 'red',
     paddingRight: 50,
     paddingBottom: 50,
+    // borderWidth: 1,
+    // borderColor: 'red',
   },
   BannerAdStyle: {
     // margin: 3,
   },
   backgroundVideo: {
-    // backgroundColor: '#ff0000',
     backgroundColor: 'rgba(0, 0, 0, 0.8)', // Red with 50% opacity
     position: 'absolute',
     height: '100%',
@@ -283,14 +283,11 @@ const styles = StyleSheet.create({
   },
   diamond: {
     position: 'absolute',
-    // top: 80,
     left: 15,
     bottom: 15,
     opacity: 0.8,
     // borderWidth: 1,
     // borderColor: 'red',
-    // paddingRight: 50,
-    // paddingBottom: 50,
     width: 30,
     height: 30,
   },
