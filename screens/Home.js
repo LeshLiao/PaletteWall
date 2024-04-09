@@ -1,17 +1,25 @@
-import { StyleSheet, View, Image, Platform, ScrollView, TouchableOpacity, ImageBackground,Modal, TouchableWithoutFeedback} from 'react-native';
+import {
+  View,
+  Image,
+  Platform,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ImageBackground,Modal,
+  TouchableWithoutFeedback
+} from 'react-native';
 import React, { useEffect, useState, useRef} from 'react';
-import axios from 'axios';
-// import { useNavigation } from '@react-navigation/native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import Menu from './Menu';
 import TopFlatList from './TopFlatList'
+import ModalContent from '../component/ModalContent'
 import Video from 'react-native-video';
+import { getAllItems, getAllStatic, getItemsByTag} from '../service/dataService'
 
 const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-2358475138249813/5341581079';
 
 export default function Home() {
   const [items, setItems] = useState([]);
-  // const navigation = useNavigation(); // Get the navigation object
   const [showModal, setShowModal] = useState(false);
   const [modalImg, setModalImg] = useState('');
   const [downloadList, setDownloadList] = useState('');
@@ -22,38 +30,20 @@ export default function Home() {
   const videoRef = useRef();
   let timeoutID = useRef();
 
-  axios.defaults.baseURL = 'https://online-store-service.onrender.com';
-
-  const getAllItems = async () => {
-    const { data } = await axios.get('/api/items');
-    return data;
-  };
-
-  const getItemsByTag = async tag => {
-    const { data } = await axios.get('/api/items/tag/' + tag)
-    return data
-  }
-
-  const getAllStatic = async () => {
-    const { data } = await axios.get('/api/items/photoType/live')
-    return data
-  }
-
   useEffect(() => {
     getAllItems().then(items => setItems(items));
   }, []);
 
   const testCallBack = (index) => {
     if (index == 0)
-      getItemsByTag('Painting').then(items => setItems(items));
-    else if (index == 1)
-      getItemsByTag('City').then(items => setItems(items));
-    else if (index == 2)
-      getAllStatic().then(items => setItems(items));
+    getAllStatic().then(items => setItems(items));
+  else if (index == 1)
+    getItemsByTag('City').then(items => setItems(items));
+else if (index == 2)
+    getItemsByTag('Painting').then(items => setItems(items));
   }
 
   const handleImagePress = (imageUri, downloadList, photoType, freeDownload) => {
-    // navigation.navigate('Preview', { imageUri, link });
     setModalImg(imageUri);
     setShowModal(true);
     setDownloadList(downloadList);
@@ -65,15 +55,16 @@ export default function Home() {
   };
 
   const onLoad = (data) => {
-    // console.log({ data });
+    console.log('onLoad');
     clearTimeout(timeoutID.current);
     if (videoRef.current) {
+      console.log('current');
       timeoutID.current = setTimeout(() => {
         setIsPaused(false);
-        // console.log('seek()')
         // Call the seek() method with the desired position
+        console.log('seek()');
         videoRef.current.seek(0);
-      }, 500);
+      }, 250);
     }
   };
 

@@ -4,7 +4,7 @@ import { Dimensions, View,Image, StyleSheet ,FlatList,TouchableHighlight } from 
 
 export default function TopFlatList({ myFunc }) {
   const width = Dimensions.get('window').width * 0.85;
-  const height = width * 0.26;
+  const height = width * 0.36;
 
   const testFunc = (index) => {
     console.log('testFunc');
