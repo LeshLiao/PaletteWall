@@ -246,7 +246,9 @@ const styles = StyleSheet.create({
   touch_back: {
     position: 'absolute',
     top: '10%',
+    height: '70%',  // 80% on the top is touch_back area.
     left: '5%',
+    width: '90%',
     opacity: 0.35,
     paddingRight: 50,
     paddingBottom: 50,
