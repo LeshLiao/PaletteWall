@@ -138,7 +138,9 @@ else if (index == 2)
         { photoType === 'static' ?
         <ImageBackground source={{ uri: modalImg }} style={styles.imageBackground}>
           <View style={styles.menuContainer}>
+            <Image source={require('./images/smartphone.png')} style={styles.image_back} resizeMode="contain"/>
             <Menu downloadList={downloadList} photoType={photoType} isFree={isFree}/>
+            <View style={styles.buttonLike}/>
           </View>
           <TouchableOpacity onPress={() => {setShowModal(false);}} style={styles.touch_back}>
             <Image
@@ -156,7 +158,7 @@ else if (index == 2)
             )} */}
         </ImageBackground>
         :
-        <>
+        <View style={styles.videoBackground}>
         <Video source={{uri: videoLink}}
         // ref={(ref) => {
         //   this.player = ref
@@ -166,9 +168,11 @@ else if (index == 2)
         paused={isPaused} // Disable autoplay at begin
         rate={0.38}
         resizeMode={"cover"}
-        style={styles.backgroundVideo}/>
+        style={styles.previewVideo}/>
           <View style={styles.menuContainer}>
+            <Image source={require('./images/smartphone.png')} style={styles.image_back} resizeMode="contain"/>
             <Menu downloadList={downloadList} photoType={photoType} isFree={isFree}/>
+            <View style={styles.buttonLike}/>
           </View>
           <TouchableOpacity onPress={() => {setShowModal(false);}} style={styles.touch_back}>
             <Image
@@ -177,7 +181,7 @@ else if (index == 2)
               resizeMode="contain"
             />
           </TouchableOpacity>
-        </>}
+        </View>}
       </Modal>
       {Platform.OS === 'ios' && (<View style={styles.bottomBouncingBackground}/>)}
       </ScrollView>
@@ -213,24 +217,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#00ff00',
     padding: 100
   },
-  imageBackground: {
-    backgroundColor:'#000',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   menuContainer: {
     position: 'absolute',
-    bottom: '7%',
-    top: 0,
-    left: 0,
-    right: 0,
-    justifyContent: 'flex-end',
+    bottom: '6%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    width: '80%',
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingRight: 15,
+    paddingLeft: 15,
+    borderRadius: 20,
+    // backgroundColor: '#555',
+    opacity: 0.7,
     // borderWidth: 1,
     // borderColor: 'red',
   },
   image_back: {
+    width: 35,
+    height: 35,
+  },
+  buttonLike: {
     width: 35,
     height: 35,
   },
@@ -244,15 +252,25 @@ const styles = StyleSheet.create({
     paddingRight: 50,
     paddingBottom: 50,
     // borderWidth: 1,
-    // borderColor: 'red',
+    // borderColor: 'blue',
   },
   BannerAdStyle: {
     // margin: 3,
   },
-  backgroundVideo: {
+  imageBackground: {
+    backgroundColor:'#000',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  videoBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  previewVideo: {
     backgroundColor: 'rgba(0, 0, 0, 0.8)', // Red with 50% opacity
     position: 'absolute',
-    height: '100%',
     top: 0,
     left: 0,
     bottom: 0,

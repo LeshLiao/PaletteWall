@@ -99,7 +99,7 @@ export default function Menu({downloadList, photoType, isFree}){
         ) : (
           <TouchableOpacity onPress={onPress}>
             <Image
-              source={require('./images/cloud_download.png')}
+              source={require('./images/download2.png')}
               style={styles.image}
               resizeMode="contain"
             />
