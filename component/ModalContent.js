@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import {
   View,
   Image,
@@ -9,19 +9,44 @@ import {
 import Menu from '../screens/Menu';
 
 export default function ModalContent({ downloadList, photoType, isFree, modalImg, setShowModal }) {
+  const [showLock, setShowLock] = useState(false);
+
+  const showLockScreen = (lock) => {
+    setShowLock(lock);
+  }
+
+  const closeScreen = () => {
+    if (showLock == false) {
+      setShowModal(false);
+    }
+    setShowLock(false);
+  }
+
   return (
-    <ImageBackground source={{ uri: modalImg }} style={styles.imageBackground}>
-      <TouchableOpacity onPress={() => setShowModal(false)} style={styles.back_container}>
+    <>
+      { showLock ?
+        <TouchableOpacity onPress={() => {showLockScreen(false);}}>
+          <Image source={require('../screens/images/lock_text_2.png')} style={styles.lockScreen} resizeMode="contain"/>
+        </TouchableOpacity>
+      :
+        <>
+        <View style={styles.menuContainer}>
+          <TouchableOpacity onPress={() => {showLockScreen(true);}}>
+            <Image source={require('../screens/images/smartphone.png')} style={styles.image_back} resizeMode="contain"/>
+          </TouchableOpacity>
+          <Menu downloadList={downloadList} photoType={photoType} isFree={isFree}/>
+          <View style={styles.buttonLike}/>
+        </View>
+        <TouchableOpacity onPress={() => {closeScreen();}} style={styles.touch_back}>
         <Image
           source={require('../screens/images/back_img.png')}
           style={styles.image_back}
           resizeMode="contain"
-        />
-      </TouchableOpacity>
-      <View style={styles.menuContainer}>
-        <Menu downloadList={downloadList} photoType={photoType} isFree={isFree} />
-      </View>
-    </ImageBackground>
+          />
+        </TouchableOpacity>
+        </>
+      }
+    </>
   );
 }
 
@@ -37,33 +62,41 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35,
   },
-
-  back_container: {
-    flex: 8,
-    // position: 'absolute',
+  buttonLike: {
+    width: 35,
+    height: 35,
+  },
+  touch_back: {
+    position: 'absolute',
     top: '10%',
-    // height: '70%',  // 80% on the top is touch_back area.
-    // left: '5%',
+    height: '70%',  // 80% on the top is touch_back area.
+    left: '5%',
     width: '90%',
     opacity: 0.35,
     paddingRight: 50,
     paddingBottom: 50,
-    borderWidth: 1,
-    borderColor: 'red',
+    // borderWidth: 1,
+    // borderColor: 'blue',
   },
   menuContainer: {
-    // position: 'absolute',
-    bottom: '7%',
-    // top: 0,
-    // left: 0,
-    // right: 0,
-    // height: 100,
+    position: 'absolute',
+    bottom: '6%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     width: '80%',
-    flex: 1,
-    // justifyContent: 'flex-end',
-    // alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'blue',
-
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingRight: 15,
+    paddingLeft: 15,
+    borderRadius: 20,
+    // backgroundColor: '#555',
+    opacity: 0.7,
+    // borderWidth: 1,
+    // borderColor: 'red',
   },
+  lockScreen: {
+    flex:1,
+    opacity:0.8,
+  }
 });

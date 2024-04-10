@@ -55,14 +55,11 @@ else if (index == 2)
   };
 
   const onLoad = (data) => {
-    console.log('onLoad');
     clearTimeout(timeoutID.current);
     if (videoRef.current) {
-      console.log('current');
       timeoutID.current = setTimeout(() => {
         setIsPaused(false);
         // Call the seek() method with the desired position
-        console.log('seek()');
         videoRef.current.seek(0);
       }, 250);
     }
@@ -137,39 +134,27 @@ else if (index == 2)
 
         { photoType === 'static' ?
         <ImageBackground source={{ uri: modalImg }} style={styles.imageBackground}>
-          <View style={styles.menuContainer}>
-            <Image source={require('./images/smartphone.png')} style={styles.image_back} resizeMode="contain"/>
-            <Menu downloadList={downloadList} photoType={photoType} isFree={isFree}/>
-            <View style={styles.buttonLike}/>
-          </View>
-          <TouchableOpacity onPress={() => {setShowModal(false);}} style={styles.touch_back}>
-            <Image
-              source={require('./images/back_img.png')}
-              style={styles.image_back}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-            {/* {!isFree && (
-              <Image
-                source={require('./images/diamond.png')}
-                style={styles.modalDiamond}
-                resizeMode="contain"
-              />
-            )} */}
+          <ModalContent
+            downloadList={downloadList}
+            photoType={photoType}
+            isFree={isFree}
+            modalImg={modalImg}
+            setShowModal={setShowModal}
+          />
         </ImageBackground>
         :
         <View style={styles.videoBackground}>
-        <Video source={{uri: videoLink}}
-        // ref={(ref) => {
-        //   this.player = ref
-        // }}
-        ref={videoRef}    // Store reference
-        onLoad={onLoad}
-        paused={isPaused} // Disable autoplay at begin
-        rate={0.38}
-        resizeMode={"cover"}
-        style={styles.previewVideo}/>
-          <View style={styles.menuContainer}>
+          <Video source={{uri: videoLink}}
+          // ref={(ref) => {
+          //   this.player = ref
+          // }}
+          ref={videoRef}    // Store reference
+          onLoad={onLoad}
+          paused={isPaused} // Disable autoplay at begin
+          rate={0.38}
+          resizeMode={"cover"}
+          style={styles.previewVideo}/>
+          {/* <View style={styles.menuContainer}>
             <Image source={require('./images/smartphone.png')} style={styles.image_back} resizeMode="contain"/>
             <Menu downloadList={downloadList} photoType={photoType} isFree={isFree}/>
             <View style={styles.buttonLike}/>
@@ -180,7 +165,14 @@ else if (index == 2)
               style={styles.image_back}
               resizeMode="contain"
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          <ModalContent
+            downloadList={downloadList}
+            photoType={photoType}
+            isFree={isFree}
+            modalImg={modalImg}
+            setShowModal={setShowModal}
+          />
         </View>}
       </Modal>
       {Platform.OS === 'ios' && (<View style={styles.bottomBouncingBackground}/>)}
@@ -208,7 +200,7 @@ const styles = StyleSheet.create({
   },
   thumbnail: {
     width: '100%',
-    aspectRatio: 9 / 18, // Adjusted to 9:16 ratio
+    aspectRatio: 9 / 19, // Adjusted to 9:16 ratio
     // borderRadius: 10, // Rounded corners for images
   },
   modal: {
@@ -216,43 +208,6 @@ const styles = StyleSheet.create({
     alignContent:'center',
     backgroundColor: '#00ff00',
     padding: 100
-  },
-  menuContainer: {
-    position: 'absolute',
-    bottom: '6%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '80%',
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingRight: 15,
-    paddingLeft: 15,
-    borderRadius: 20,
-    // backgroundColor: '#555',
-    opacity: 0.7,
-    // borderWidth: 1,
-    // borderColor: 'red',
-  },
-  image_back: {
-    width: 35,
-    height: 35,
-  },
-  buttonLike: {
-    width: 35,
-    height: 35,
-  },
-  touch_back: {
-    position: 'absolute',
-    top: '10%',
-    height: '70%',  // 80% on the top is touch_back area.
-    left: '5%',
-    width: '90%',
-    opacity: 0.35,
-    paddingRight: 50,
-    paddingBottom: 50,
-    // borderWidth: 1,
-    // borderColor: 'blue',
   },
   BannerAdStyle: {
     // margin: 3,
@@ -297,17 +252,7 @@ const styles = StyleSheet.create({
     left: 15,
     bottom: 15,
     opacity: 0.8,
-    // borderWidth: 1,
-    // borderColor: 'red',
     width: 30,
     height: 30,
   },
-  modalDiamond: {
-    position: 'absolute',
-    left: 35,
-    bottom: 50,
-    opacity: 0.8,
-    width: 50,
-    height: 50,
-  }
 });

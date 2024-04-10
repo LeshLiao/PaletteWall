@@ -98,11 +98,19 @@ export default function Menu({downloadList, photoType, isFree}){
           <ActivityIndicator size="large" color="#fff" />
         ) : (
           <TouchableOpacity onPress={onPress}>
-            <Image
+            {isFree ?
+              <Image
               source={require('./images/download2.png')}
               style={styles.image}
               resizeMode="contain"
             />
+            :
+            <Image
+              source={require('./images/download_premium.png')}
+              style={styles.image}
+              resizeMode="contain"
+            />
+            }
           </TouchableOpacity>
         )}
       </View>
@@ -116,7 +124,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 45,
-    height: 45,
+    height: 43,
     opacity: 0.8,
   },
 });
