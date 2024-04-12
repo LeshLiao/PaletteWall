@@ -101,13 +101,13 @@ export default function Menu({downloadList, photoType, isFree}){
             {isFree ?
               <Image
               source={require('./images/download2.png')}
-              style={styles.image}
+              style={styles.download_image}
               resizeMode="contain"
             />
             :
             <Image
-              source={require('./images/download_premium.png')}
-              style={styles.image}
+              source={require('./images/p2.png')}
+              style={styles.p_image}
               resizeMode="contain"
             />
             }
@@ -122,9 +122,14 @@ const styles = StyleSheet.create({
   container: {
     // Add styles as needed
   },
-  image: {
+  download_image: {
     width: 45,
     height: 43,
-    opacity: 0.8,
+    opacity: 0.7,
+  },
+  p_image: {
+    width: 42,
+    height: 39,
+    opacity: 0.9,
   },
 });
