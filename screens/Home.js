@@ -213,7 +213,8 @@ const styles = StyleSheet.create({
     // margin: 3,
   },
   imageBackground: {
-    backgroundColor:'#000',
+    // backgroundColor:'#000',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Red with 50% opacity
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
