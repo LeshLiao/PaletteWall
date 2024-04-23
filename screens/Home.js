@@ -35,12 +35,24 @@ export default function Home() {
   }, []);
 
   const testCallBack = (index) => {
-    if (index == 0)
-    getAllStatic().then(items => setItems(items));
-  else if (index == 1)
-    getItemsByTag('City').then(items => setItems(items));
-else if (index == 2)
-    getItemsByTag('Painting').then(items => setItems(items));
+    if (index == 0) {
+      // getAllStatic().then(items => setItems(items));
+      getAllStatic()
+      .then(items => {
+        // Sort items by itemId in descending order
+        items.sort((a, b) => b.itemId.localeCompare(a.itemId))
+        // Get only the first 12 items
+        const newItems = items.slice(0, 12)
+        setItems(newItems)
+      })
+      .catch(error => console.error('Error fetching items:', error))
+    } else if (index == 1) {
+      getItemsByTag('Anime').then(items => setItems(items));
+    } else if (index == 2) {
+      getItemsByTag('Painting').then(items => setItems(items));
+    } else if (index == 3) {
+      getItemsByTag('City').then(items => setItems(items));
+    }
   }
 
   const handleImagePress = (imageUri, downloadList, photoType, freeDownload) => {
