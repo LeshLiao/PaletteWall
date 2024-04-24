@@ -29,9 +29,22 @@ export default function Home() {
   const [isFree, setIsFree] = useState(false);
   const videoRef = useRef();
   let timeoutID = useRef();
+  const [randomAllItems, setRandomAllItems] = useState([]);
 
   useEffect(() => {
-    getAllItems().then(items => setItems(items));
+    getAllItems().then(items => {
+      // Filter out items where freeDownload is true
+      const filteredItems = items.filter(item => item.freeDownload);
+
+      // Fisher-Yates shuffle algorithm
+      for (let i = filteredItems.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filteredItems[i], filteredItems[j]] = [filteredItems[j], filteredItems[i]];
+      }
+
+      setItems(filteredItems);
+      setRandomAllItems(filteredItems);
+    });
   }, []);
 
   const testCallBack = (index) => {
@@ -41,18 +54,28 @@ export default function Home() {
       .then(items => {
         // Sort items by itemId in descending order
         items.sort((a, b) => b.itemId.localeCompare(a.itemId))
+        // Filter out items where freeDownload is true
+        const filteredItems = items.filter(item => item.freeDownload);
         // Get only the first 12 items
-        const newItems = items.slice(0, 12)
+        const newItems = filteredItems.slice(0, 12)
         setItems(newItems)
       })
       .catch(error => console.error('Error fetching items:', error))
     } else if (index == 1) {
-      getItemsByTag('Anime').then(items => setItems(items));
+      // getItemsByTag('Anime').then(items => setItems(items));
+      getItemsByTag('Anime').then(items =>
+        setItems(items.filter(item => item.freeDownload))); // only show free item
     } else if (index == 2) {
-      getItemsByTag('Painting').then(items => setItems(items));
+      // getItemsByTag('Painting').then(items => setItems(items));
+      getItemsByTag('Painting').then(items =>
+        setItems(items.filter(item => item.freeDownload))); // only show free item
     } else if (index == 3) {
-      getItemsByTag('City').then(items => setItems(items));
-    }
+      // getItemsByTag('City').then(items => setItems(items));
+      getItemsByTag('City').then(items =>
+        setItems(items.filter(item => item.freeDownload))); // only show free item
+      } else if (index == 4) {
+        setItems(randomAllItems);
+      }
   }
 
   const handleImagePress = (imageUri, downloadList, photoType, freeDownload) => {

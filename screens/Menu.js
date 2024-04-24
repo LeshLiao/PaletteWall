@@ -72,10 +72,12 @@ export default function Menu({downloadList, photoType, isFree}){
             rewarded.load();
           } else {
             console.log('Go Premium');
+            Alert.alert('', 'Premium features are currently unavailable.');
           }
           break;
         case goPremiumIndex:
           console.log('Go Premium');
+          Alert.alert('', 'Premium features are currently unavailable.');
           break;
         case cancelIndex:
           console.log('Cancel');
