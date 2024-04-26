@@ -52,6 +52,25 @@ export default function Menu({downloadList, photoType, isFree}){
     let goPremiumIndex = 0;
     let cancelIndex = 1;
 
+    // No Premium Version
+    options = ['Watch Ads', 'Cancel'];
+    showActionSheetWithOptions({
+      options,
+      cancelButtonIndex: cancelIndex,
+    }, (selectedIndex) => {
+      switch (selectedIndex) {
+        case 0:
+            console.log('Watch Ads');
+            setPress(true);
+            rewarded.load();
+          break;
+        case cancelIndex:
+          console.log('Cancel');
+          break;
+      }
+    });
+
+    /*
     if (isFree === true) {
       options = ['Watch Ads', 'Go Premium', 'Cancel'];
       goPremiumIndex = 1;
@@ -86,6 +105,7 @@ export default function Menu({downloadList, photoType, isFree}){
           break;
       }
     });
+    */
   }
 
   // No advert ready to show yet
